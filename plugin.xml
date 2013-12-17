@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="nl.codeyellow.signature"
+    version="0.1">
+  <name>Signature view plugin</name>
+  <license>Apache 2.0 License</license>
+  <author>Code Yellow B.V.</author>
+  <description>
+    Native view plugin to request and capture the user's written
+    signature.  Currently only contains an Android implementation.
+  </description>
+
+  <platform name="android">
+    <js-module src="www/signature.js" name="Signature" />
+
+    <config-file target="res/xml/config.xml" parent="/widget">
+      <feature name="Signature">
+	<param name="android-package" value="nl.codeyellow.plugin.SignaturePlugin" />
+      </feature>
+    </config-file>
+    <source-file src="src/android/nl/codeyellow/plugin/SignaturePlugin.java"
+		 target-dir="src/nl/codeyellow/plugin" />
+    <source-file src="src/android/nl/codeyellow/view/SignatureView.java"
+		 target-dir="src/nl/codeyellow/view" />
+  </platform>
+</plugin>
