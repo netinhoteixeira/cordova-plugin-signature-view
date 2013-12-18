@@ -56,7 +56,7 @@ public class SignatureDialogFragment extends DialogFragment {
 						// Signal that the user has exited, just in
 						// case we want to perform some sort of action
 						// on the JS side.
-						ctx.success();
+						ctx.success((String)null);
 						dialog.cancel();
 					}
 				})
