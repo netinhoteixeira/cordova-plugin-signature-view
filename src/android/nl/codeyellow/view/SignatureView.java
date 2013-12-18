@@ -8,15 +8,19 @@
  */
 package nl.codeyellow.view;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.graphics.Color;
-import android.graphics.Canvas;
-import android.view.View;
-import android.view.MotionEvent;
-import android.content.Context;
+import java.io.ByteArrayOutputStream;
 import android.util.AttributeSet;
+import android.util.Base64;
+import android.util.Base64OutputStream;
+import android.view.MotionEvent;
+import android.view.View;
 
 public class SignatureView extends View {
 
@@ -52,6 +56,31 @@ public class SignatureView extends View {
 
 		// Repaints the entire view.
 		invalidate();
+	}
+
+	/**
+	 * Extract the current bitmap state of the display, encoded in
+	 * a data URI.
+	 */
+	public String getBitmapDataURI() {
+		if (!isDrawingCacheEnabled())
+			buildDrawingCache();
+		
+		Bitmap bmp = getDrawingCache();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+		// TODO: Is JPEG the best we can use here?
+		// TODO: Provide a way to determine image size.
+		byte[] header = "data:image/jpeg;base64,".getBytes();
+		out.write(header, 0, header.length);
+
+		Base64OutputStream b64out = new Base64OutputStream(out, Base64.DEFAULT);
+		bmp.compress(Bitmap.CompressFormat.JPEG, 100, b64out);
+		
+		if (!isDrawingCacheEnabled())
+			destroyDrawingCache();
+		
+		return out.toString();
 	}
 
 	@Override

@@ -10,12 +10,9 @@
 package nl.codeyellow.plugin;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
-import nl.codeyellow.view.SignatureView;
+import nl.codeyellow.app.SignatureDialogFragment;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONObject;
@@ -28,34 +25,17 @@ public class SignaturePlugin extends CordovaPlugin {
 		throws JSONException
 	{
 		if (action.equals("new")) {
+			CharSequence title;
+			if (args.length() > 0) {
+				title = args.getString(0);
+			} else {
+				// TODO: Make default string translatable
+				title = "Please sign below";
+			}
 			Activity act = this.cordova.getActivity();
-			SignatureView view = new SignatureView(act.getApplicationContext(), null);
-			
-			/* Create layout programmatically because we
-			   can't obtain a reference to 'R', which
-			   lives in a project-specific package, the
-			   name of which varies across projects. */
-			RelativeLayout layout = new RelativeLayout(act);
-			RelativeLayout.LayoutParams params =
-				new RelativeLayout.LayoutParams(
-					RelativeLayout.LayoutParams.MATCH_PARENT,
-					RelativeLayout.LayoutParams.MATCH_PARENT);
-			layout.addView(view, params);
-
-			final PopupWindow popup = new PopupWindow(act);
-			popup.setContentView(layout);
-			popup.setHeight(1000);
-			popup.setWidth(1000);
-			popup.showAtLocation(layout, Gravity.NO_GRAVITY, 100, 100);
-
-			// Button accept = layout.findViewById(R.id.accept);
-			// accept.setOnClickListener(new OnClickListener() {
-			// 	@Override
-			// 	public void onClick(View v) {
-			// 		popup.dismiss();
-			// 		callbackContext.success("HAI");
-			// 	}
-			// });
+			FragmentManager fragmentManager = act.getFragmentManager();
+			SignatureDialogFragment frag = new SignatureDialogFragment(title, callbackContext);
+			frag.show(fragmentManager, "dialog");
 			return true;
 		} else {
 			callbackContext.error("Unknown action: "+action);

@@ -19,6 +19,8 @@
 	<param name="android-package" value="nl.codeyellow.plugin.SignaturePlugin" />
       </feature>
     </config-file>
+    <source-file src="src/android/nl/codeyellow/app/SignatureDialogFragment.java"
+		 target-dir="src/nl/codeyellow/app" />
     <source-file src="src/android/nl/codeyellow/plugin/SignaturePlugin.java"
 		 target-dir="src/nl/codeyellow/plugin" />
     <source-file src="src/android/nl/codeyellow/view/SignatureView.java"
