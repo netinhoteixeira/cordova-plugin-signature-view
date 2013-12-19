@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import java.lang.CharSequence;
+import java.io.IOException;
 import nl.codeyellow.view.SignatureView;
 import org.apache.cordova.CallbackContext; // Ugh, but the alternatives are probably worse
 import org.apache.cordova.PluginResult;
@@ -24,9 +25,11 @@ import org.apache.cordova.PluginResult;
 public class SignatureDialogFragment extends DialogFragment {
 	protected CallbackContext callbackContext;
 	protected CharSequence dialogTitle;
+	protected String bitmapLocation;
 	
-	public SignatureDialogFragment(CharSequence title, CallbackContext ctx) {
+	public SignatureDialogFragment(CharSequence title, String path, CallbackContext ctx) {
 		dialogTitle = title;
+		bitmapLocation = path;
 		callbackContext = ctx;
 	}
 	
@@ -44,8 +47,14 @@ public class SignatureDialogFragment extends DialogFragment {
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						ctx.success(view.getBitmapDataURI());
-						dialog.dismiss();
+						try {
+							view.saveBitmap(bitmapLocation);
+							ctx.success(bitmapLocation);
+						} catch (IOException e) {
+							ctx.error(e.toString());
+						} finally {
+							dialog.dismiss();
+						}
 					}
 				})
 			.setNegativeButton(
