@@ -74,7 +74,6 @@ You'll need to take care of actually managing the files yourself.
 
 				var img = new Image();
 				img.src = fs.toURL() + '/' + filename;
-				console.log(img.src);
 				sig.appendChild(img);
 			}, function (msg) {
 				/* This is the "error" callback. */
