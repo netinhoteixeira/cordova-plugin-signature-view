@@ -55,7 +55,7 @@ You'll need to take care of actually managing the files yourself.
 	:::javascript
 	var Signature = cordova.require('nl.codeyellow.signature.Signature');
 	window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
-	function fail() { alert("Couldn't access FS!"); }
+	function fail() { alert('Couldn't access FS!'); }
 	function gotFS(fs) {
 		Signature.getSignature(
 			// This should be unique but for the demo we don't care.
@@ -77,7 +77,7 @@ You'll need to take care of actually managing the files yourself.
 				sig.appendChild(img);
 			}, function (msg) {
 				/* This is the "error" callback. */
-				alert("Could not obtain a signature due to an error: "+msg);
+				alert('Could not obtain a signature due to an error: '+msg);
 			},
 			/* This final string is optional and defaults to a similar string. */
 			'Please put your signature down below');
