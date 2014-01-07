@@ -3,7 +3,9 @@ Cordova Signature View plugin
 
 This plugin provides a simple "pad" for requesting a user's signature
 which you can use in Cordova/Phonegap applications.  For efficiency
-reasons, the pad is implemented natively (currently only for Android).
+reasons, the pad is implemented natively where available (currently
+only for Android).  A JavaScript fallback is provided for other
+platforms, as well as for desktop browsers (for ease of testing).
 
 This works best with an "active" pen, to get the most detailed output.
 It captures normal "touch" events, so you could use it with a pressure
@@ -15,13 +17,15 @@ capturing system, but it provides no drawing "tools" of any kind.
 Usage
 -----
 
-This extension provides a single class-like object which has a method
-attached to it called `getSignature`.  You can load it by requiring
-the module `nl.codeyellow.signature.Signature` and it has the
-following signature (no pun intended):
+This extension is a little strange in that it installs a file called
+www/js/signature-view.js directly into your application.  You can load
+this and it will provide the AMD module `cordova.signature-view`.  If
+you're not using an AMD loader, it will define a global SignatureView
+variable (a property on "window").  It provides only one method, with
+the following signature (no pun intended):
 
 	:::javascript
-	Signature.getSignature(success, error, file, [title]);
+	SignatureView.getSignature(success, error, file, [title]);
 
 The `success` argument is a callback function accepting one argument,
 which is either null (in case the user canceled the dialog) or an
