@@ -15,9 +15,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,25 +56,19 @@ public class SignatureView extends View {
 	}
 
 	/**
-	 * Extract the current bitmap state of the display, and save it to
-	 * the requested location.
+	 * Extract the current bitmap state of the display.  Returns an
+	 * immutable ARGB_8888 bitmap.
 	 */
-	public void saveBitmap(String path)
-		throws IOException {
+	public Bitmap getBitmap() {
 		if (!isDrawingCacheEnabled())
 			buildDrawingCache();
 		
-		Bitmap bmp = getDrawingCache();
-		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(path));
-		try {
-			// TODO: Is JPEG the best we can use here?
-			// TODO: Provide a way to determine image size.
-			bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
-		} finally {
-			out.close();
-			if (!isDrawingCacheEnabled())
-				destroyDrawingCache();
-		}
+		Bitmap bmp = getDrawingCache().copy(Bitmap.Config.ARGB_8888, false);
+		
+		if (!isDrawingCacheEnabled())
+			destroyDrawingCache();
+		
+		return bmp;
 	}
 
 	@Override

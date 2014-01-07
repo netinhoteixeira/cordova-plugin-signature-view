@@ -2,7 +2,7 @@
     'use strict';
     
     var signature = {
-        getSignature: function(filename, successCallback, errorCallback) {
+        getSignature: function(successCallback, errorCallback) {
             // Are we on a cordova device (no desktop browser), and is
             // it one of the supported platforms for the native view?
             // XXX: This really requires waiting for deviceReady.
@@ -18,7 +18,7 @@
                 signature.getSignatureFallback.apply(signature, arguments);
             }
         },
-        getSignatureFallback: function(filename, successCallback, errorCallback, title) {
+        getSignatureFallback: function(successCallback, errorCallback, title) {
             title = title || "Please sign below";
             var popup = document.createElement('div'),
             cleanUp = function() {
@@ -30,9 +30,10 @@
                 document.removeEventListener('scroll', determineOffset);
                 popup.remove();
             }.bind(this), okFun = function(ev) {
-                // Grab the picture from the canvas
+                var ctx = canvas.getContext('2d'),
+                imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 cleanUp();
-                successCallback('lalalalala');
+                successCallback(imgData);
             }, cancelFun = function(ev) {
                 cleanUp();
                 successCallback(null);

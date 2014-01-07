@@ -25,7 +25,7 @@ variable (a property on "window").  It provides only one method, with
 the following signature (no pun intended):
 
 	:::javascript
-	SignatureView.getSignature(success, error, file, [title]);
+	SignatureView.getSignature(success, error, [title]);
 
 The `success` argument is a callback function accepting one argument,
 which is either null (in case the user canceled the dialog) or an
@@ -35,9 +35,6 @@ object containing the raw binary image data.
 The `error` argument is a callback function accepting one argument,
 which is a string containing an error message indicating what went
 wrong.
-
-The `file` argument is a string indicating the filename to which the
-JPEG image should be saved.
 
 The `title` argument is an optional string which indicates what the
 dialog should show as a heading.
@@ -50,39 +47,25 @@ or something equivalent.
 Example
 -------
 
-Here's a minimal working example.  It assumes there's an element in
-your HTML document which has an id of `signature`, which can receive
-images, and that the "file" plugin has been installed.
-
-You'll need to take care of actually managing the files yourself.
+Here's a minimal working example.  It assumes there's a CANVAS element
+in your HTML document which has an id of `signature`.
 
 	:::javascript
 	var Signature = cordova.require('nl.codeyellow.signature.Signature');
-	window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
-	function fail() { alert('Couldn't access FS!'); }
-	function gotFS(fs) {
-		Signature.getSignature(
-			// This should be unique but for the demo we don't care.
-			// Please note that replacing a file with the same name
-			// won't have any effect.
-			fs.fullPath + '/image.jpg',
-			function (filename) {
-				/* This is the "success" callback. */
-				if (!filename) return; // User clicked cancel, we got no image data.
-		
-				var sig = document.getElementById('signature');
-				var imgs = sig.getElementsByTagName('img');
-				for (var i = 0; i < imgs.length; i++) {
-					sig.removeChild(imgs[i]);
-				}
-
-				var img = new Image();
-				img.src = fs.toURL() + '/' + filename;
-				sig.appendChild(img);
-			}, function (msg) {
-				/* This is the "error" callback. */
-				alert('Could not obtain a signature due to an error: '+msg);
-			},
-			/* This final string is optional and defaults to a similar string. */
-			'Please put your signature down below');
-	}
+	Signature.getSignature(
+		function (imgData) {
+			/* This is the "success" callback. */
+			if (!imgData) return; // User clicked cancel, we got no image data.
+	
+			var canvas = document.getElementById('signature'),
+			ctx = canvas.getContext('2d');
+			canvas.width = imgData.width;
+			canvas.height = imgData.height;
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.putImageData(imgData, 0, 0);
+		}, function (msg) {
+			/* This is the "error" callback. */
+			alert('Could not obtain a signature due to an error: '+msg);
+		},
+		/* This final string is optional and defaults to a similar string. */
+		'Please put your signature down below');

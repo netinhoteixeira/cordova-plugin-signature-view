@@ -10,6 +10,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.view.Gravity;
@@ -17,7 +18,8 @@ import android.view.View;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import java.lang.CharSequence;
-import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import nl.codeyellow.view.SignatureView;
 import org.apache.cordova.CallbackContext; // Ugh, but the alternatives are probably worse
 import org.apache.cordova.PluginResult;
@@ -25,11 +27,9 @@ import org.apache.cordova.PluginResult;
 public class SignatureDialogFragment extends DialogFragment {
 	protected CallbackContext callbackContext;
 	protected CharSequence dialogTitle;
-	protected String bitmapLocation;
 	
-	public SignatureDialogFragment(CharSequence title, String path, CallbackContext ctx) {
+	public SignatureDialogFragment(CharSequence title, CallbackContext ctx) {
 		dialogTitle = title;
-		bitmapLocation = path;
 		callbackContext = ctx;
 	}
 	
@@ -47,14 +47,18 @@ public class SignatureDialogFragment extends DialogFragment {
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						try {
-							view.saveBitmap(bitmapLocation);
-							ctx.success(bitmapLocation);
-						} catch (IOException e) {
-							ctx.error(e.toString());
-						} finally {
-							dialog.dismiss();
-						}
+						Bitmap bmp = view.getBitmap();
+						// Maybe use getAllocationByteCount()+8?  It
+						// was added in API level 19.
+						int size = bmp.getWidth() * bmp.getHeight() * 4 + 8;
+						ByteBuffer buf = ByteBuffer.allocate(size); // BIG_ENDIAN
+						bmp.copyPixelsToBuffer(buf);
+						// We can't put the metadata at the start because
+						// copyPixelsToBuffer() ignores buf's position...
+						buf.putInt(bmp.getWidth());
+						buf.putInt(bmp.getHeight());
+						ctx.success(buf.array());
+						dialog.dismiss();
 					}
 				})
 			.setNegativeButton(

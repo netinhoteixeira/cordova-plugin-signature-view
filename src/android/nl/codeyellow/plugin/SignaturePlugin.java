@@ -26,7 +26,6 @@ public class SignaturePlugin extends CordovaPlugin {
 	{
 		if (action.equals("new")) {
 			String title;
-			String path = args.getString(0);
 			if (args.length() > 1) {
 				title = args.getString(1);
 			} else {
@@ -35,7 +34,7 @@ public class SignaturePlugin extends CordovaPlugin {
 			}
 			Activity act = this.cordova.getActivity();
 			FragmentManager fragmentManager = act.getFragmentManager();
-			SignatureDialogFragment frag = new SignatureDialogFragment(title, path, callbackContext);
+			SignatureDialogFragment frag = new SignatureDialogFragment(title, callbackContext);
 			frag.show(fragmentManager, "dialog");
 			return true;
 		} else {
