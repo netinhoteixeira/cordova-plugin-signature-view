@@ -38,8 +38,9 @@ public class SignatureView extends View {
 	public SignatureView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
+		setBackgroundColor(Color.WHITE);
 		paint.setAntiAlias(true);
-		paint.setColor(Color.WHITE); // TODO: Make this configurable
+		paint.setColor(Color.BLACK); // TODO: Make this configurable
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setStrokeJoin(Paint.Join.ROUND);
 		paint.setStrokeWidth(STROKE_WIDTH);

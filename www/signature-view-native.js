@@ -30,14 +30,11 @@ var SignatureViewNative = {
                 // data as if it were a UInt32Array (see also comment below)
                 pixelData = new Uint8Array(data, 0, data.byteLength - 8);
                 for(var i = 0; i < pixelData.length; i+=4) {
-                    // TODO: Figure out whether this RGBA/ARGB stuff is correct.
-                    // can't tell with these monochrome images :)
-                    // If it is correct, maybe we should do the swapping natively;
-                    // that may be faster and more consistent in the long run.
-                    imgData.data[i] = pixelData[i+1];
-                    imgData.data[i+1] = pixelData[i+2];
-                    imgData.data[i+2] = pixelData[i+3];
-                    imgData.data[i+3] = pixelData[i];
+                    // This is strange: It should be ARGB, but it is RGBA...
+                    imgData.data[i] = pixelData[i];
+                    imgData.data[i+1] = pixelData[i+1];
+                    imgData.data[i+2] = pixelData[i+2];
+                    imgData.data[i+3] = pixelData[i+3];
                 }
                 successCallback(imgData);
             }

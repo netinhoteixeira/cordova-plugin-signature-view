@@ -54,7 +54,7 @@
                 '<tr>'+
                 '  <th colspan="2" style="color: white"><span id="cordova.signature-view:title"></span></th>'+
                 '</tr><tr>'+
-                '  <td colspan="2"><canvas style="width: 100%; height: 100%;" id="cordova.signature-view:pad"></canvas></td>'+
+                '  <td colspan="2"><canvas style="width:100%;height:100%;" id="cordova.signature-view:pad"></canvas></td>'+
                 '</tr><tr>'+
                 '  <td><button style="width: 100%" id="cordova.signature-view:ok">ok</button></td>'+
                 '  <td><button style="width: 100%" id="cordova.signature-view:cancel">cancel</button></td>'+
@@ -74,10 +74,11 @@
             document.addEventListener('scroll', determineOffset, false);
             this.mouseDownEvent = this.touchStart.bind(this); // So we can unset it upon touch
             canvas.addEventListener('mousedown', this.mouseDownEvent, false);
+            this.clear(canvas);
         },
         determineOffset: function() {
-            var el, x = -window.scrollX, y = -window.scrollY;
-            for (el = this.el; el.offsetParent; el = el.offsetParent) {
+            var el, doc = document.documentElement, x = -doc.offsetLeft, y = -doc.offsetTop;
+            for (el = this.el; el.offsetParent && el.offsetParent != doc; el = el.offsetParent) {
                 x += el.offsetLeft - el.scrollLeft;
                 y += el.offsetTop - el.scrollTop;
             }
@@ -133,7 +134,7 @@
                 ctx.beginPath();
                 ctx.moveTo(t.clientX - x, t.clientY - y);
                 // TODO: Make this color configurable
-                ctx.strokeStyle = 'white';
+                ctx.strokeStyle = 'black';
                 
                 animateFrame(draw);
                 if (ev.targetTouches) {
@@ -147,10 +148,11 @@
                 }
             }
         },
-        clear: function(canvas) { // Currently unused
+        clear: function(canvas) {
             var ctx = canvas.getContext('2d');
             ctx.beginPath();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         },
     };
     // Export in an AMD-compliant way, without requiring an AMD loader
