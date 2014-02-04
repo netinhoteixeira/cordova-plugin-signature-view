@@ -2,7 +2,7 @@
  * A plugin for Apache Cordova (Phonegap) which will ask the user to
  * write his or her a signature, which gets captured into an image.
  *
- * Copyright (c) 2013, Code Yellow B.V.
+ * Copyright (c) 2013-2014, Code Yellow B.V.
  *
  * Heavily based on Holly Schinsky's tutorial:
  * http://devgirl.org/2013/09/17/how-to-write-a-phonegap-3-0-plugin-for-android/
