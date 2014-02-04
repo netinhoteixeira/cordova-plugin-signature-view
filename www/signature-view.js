@@ -30,11 +30,17 @@
                 document.removeEventListener('scroll', determineOffset);
                 popup.remove();
             }.bind(this), okFun = function(ev) {
-                var ctx = canvas.getContext('2d'),
-                imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                var imgData = null;
+                if (this.boundingBox) {
+                    var ctx = canvas.getContext('2d'),
+                    bb = this.boundingBox;
+                    imgData = ctx.getImageData(bb.left, bb.top,
+                                               bb.right - bb.left,
+                                               bb.bottom - bb.top);
+                }
                 cleanUp();
                 successCallback(imgData);
-            }, cancelFun = function(ev) {
+            }.bind(this), cancelFun = function(ev) {
                 cleanUp();
                 successCallback(null);
             },
@@ -95,6 +101,8 @@
                 ctx = canvas.getContext('2d'),
                 x = this.offset.x,
                 y = this.offset.y, // XXX This caches it effectively, so scrolling while drawing doesn't work
+                startX = t.clientX - x,
+                startY = t.clientY - y,
                 move = function(ev) {
                     if (ev.eventPhase == Event.AT_TARGET && (!ev.targetTouches || ev.targetTouches.length == 1)) {
                         ev.preventDefault();
@@ -106,17 +114,32 @@
                         var p = positions;
                         positions = [];
                         var i, l = p.length;
+                        if (!this.boundingBox && l > 0)
+                            this.boundingBox = {
+                                left: startX,
+                                top: startY,
+                                right: startX,
+                                bottom: startY
+                            };
+                        
+                        var bb = this.boundingBox; // For perf, "just in case"
+
                         for(i = 0; i < l; i++) {
                             // Force isn't available (on Android)
                             // ctx.lineWidth = p[2] * 10;
                             ctx.lineTo(p[i][0], p[i][1]);
+                            
+                            bb.left = Math.min(bb.left, p[i][0]);
+                            bb.right = Math.max(bb.right, p[i][0]);
+                            bb.top = Math.min(bb.top, p[i][1]);
+                            bb.bottom = Math.max(bb.bottom, p[i][1]);
                         }
                         ctx.stroke();
                         previousFrame = frame;
                     }
                     if (keepDrawing)
                         animateFrame(draw);
-                }, end = function(ev) {
+                }.bind(this), end = function(ev) {
                     if (ev.eventPhase == Event.AT_TARGET) {
                         canvas.removeEventListener('mousemove', move);
                         canvas.removeEventListener('touchmove', move);
@@ -132,7 +155,7 @@
                 ev.preventDefault();
 
                 ctx.beginPath();
-                ctx.moveTo(t.clientX - x, t.clientY - y);
+                ctx.moveTo(startX, startY);
                 // TODO: Make this color configurable
                 ctx.strokeStyle = 'black';
                 
@@ -153,6 +176,7 @@
             ctx.beginPath();
             ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (this.boundingBox) delete this.boundingBox;
         },
     };
     // Export in an AMD-compliant way, without requiring an AMD loader

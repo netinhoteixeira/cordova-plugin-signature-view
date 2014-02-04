@@ -34,6 +34,7 @@ public class SignatureView extends View {
 	private float lastTouchX;
 	private float lastTouchY;
 	private final RectF dirtyRect = new RectF();
+	private RectF usedRect = null;
 
 	public SignatureView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -51,16 +52,19 @@ public class SignatureView extends View {
 	 */
 	public void clear() {
 		path.reset();
-
+		usedRect = null;
 		// Repaints the entire view.
 		invalidate();
 	}
 
 	/**
 	 * Extract the current bitmap state of the display.  Returns an
-	 * immutable ARGB_8888 bitmap.
+	 * immutable ARGB_8888 bitmap or null if nothing has been drawn.
 	 */
 	public Bitmap getBitmap() {
+		if (usedRect == null)
+			return null;
+		
 		if (!isDrawingCacheEnabled())
 			buildDrawingCache();
 		
@@ -68,8 +72,12 @@ public class SignatureView extends View {
 		
 		if (!isDrawingCacheEnabled())
 			destroyDrawingCache();
-		
-		return bmp;
+
+		return Bitmap.createBitmap(bmp,
+								   (int)Math.floor(usedRect.left-HALF_STROKE_WIDTH),
+								   (int)Math.floor(usedRect.top-HALF_STROKE_WIDTH),
+								   (int)Math.ceil(usedRect.width()+HALF_STROKE_WIDTH),
+								   (int)Math.ceil(usedRect.height()+HALF_STROKE_WIDTH));
 	}
 
 	@Override
@@ -90,6 +98,8 @@ public class SignatureView extends View {
 			path.moveTo(eventX, eventY);
 			lastTouchX = eventX;
 			lastTouchY = eventY;
+			if (usedRect == null)
+				usedRect = new RectF(eventX, eventY, eventX, eventY);
 			// There is no end point yet, so don't waste cycles invalidating.
 			return true;
 
@@ -108,6 +118,9 @@ public class SignatureView extends View {
 				path.lineTo(historicalX, historicalY);
 			}
 
+			// Augment the used region with the newly dirtied region
+			usedRect.union(dirtyRect);
+			
 			// After replaying history, connect the line to the touch point.
 			path.lineTo(eventX, eventY);
 			break;

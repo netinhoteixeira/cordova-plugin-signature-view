@@ -47,17 +47,23 @@ public class SignatureDialogFragment extends DialogFragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						Bitmap bmp = view.getBitmap();
-						// Maybe use getAllocationByteCount()+8?  It
-						// was added in API level 19.
-						int size = bmp.getWidth() * bmp.getHeight() * 4 + 8;
-						ByteBuffer buf = ByteBuffer.allocate(size); // BIG_ENDIAN
-						bmp.copyPixelsToBuffer(buf);
-						// We can't put the metadata at the start because
-						// copyPixelsToBuffer() ignores buf's position...
-						buf.putInt(bmp.getWidth());
-						buf.putInt(bmp.getHeight());
-						ctx.success(buf.array());
-						dialog.dismiss();
+						// Drawing nothing is the same as canceling (for now?)
+						if (bmp == null) {
+							ctx.success((String)null);
+						} else {
+							// Maybe use getAllocationByteCount()+8?  It
+							// was added in API level 19.
+							int size = bmp.getWidth() * bmp.getHeight() * 4 + 8;
+							ByteBuffer buf = ByteBuffer.allocate(size); // BIG_ENDIAN
+							bmp.copyPixelsToBuffer(buf);
+							
+							// We can't put the metadata at the start because
+							// copyPixelsToBuffer() ignores buf's position...
+							buf.putInt(bmp.getWidth());
+							buf.putInt(bmp.getHeight());
+							ctx.success(buf.array());
+						}
+							dialog.dismiss();
 					}
 				})
 			.setNegativeButton(
