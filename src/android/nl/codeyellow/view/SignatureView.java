@@ -73,11 +73,20 @@ public class SignatureView extends View {
 		if (!isDrawingCacheEnabled())
 			destroyDrawingCache();
 
-		return Bitmap.createBitmap(bmp,
-								   (int)Math.floor(usedRect.left-HALF_STROKE_WIDTH),
-								   (int)Math.floor(usedRect.top-HALF_STROKE_WIDTH),
-								   (int)Math.ceil(usedRect.width()+HALF_STROKE_WIDTH),
-								   (int)Math.ceil(usedRect.height()+HALF_STROKE_WIDTH));
+		// Calculate the edges of the drawing, accommodating
+		// for the width of the stroke.
+		int x = (int)Math.floor(usedRect.left-HALF_STROKE_WIDTH);
+		int y = (int)Math.floor(usedRect.top-HALF_STROKE_WIDTH);
+		int width = (int)Math.ceil(usedRect.width()+HALF_STROKE_WIDTH);
+		int height = (int)Math.ceil(usedRect.height()+HALF_STROKE_WIDTH);
+
+		// Clip on image size (order matters here!)
+		x = (int)Math.max(0, x);
+		y = (int)Math.max(0, y);
+		width = (int)Math.min(width, bmp.getWidth() - x);
+		height = (int)Math.min(height, bmp.getHeight() - y);
+
+		return Bitmap.createBitmap(bmp, x, y, width, height);
 	}
 
 	@Override
