@@ -55,17 +55,15 @@
             popup.style.width = '100%';
             popup.style.height = '100%';
             popup.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-            // TODO: Translatable strings for OK/Cancel, make colors configurable
-            popup.innerHTML = '<table style="margin: 10em auto; background-color: black;">'+
-                '<tr>'+
-                '  <th colspan="2" style="color: white"><span id="cordova.signature-view:title"></span></th>'+
-                '</tr><tr>'+
-                '  <td colspan="2"><canvas style="width:100%;height:100%;" id="cordova.signature-view:pad"></canvas></td>'+
-                '</tr><tr>'+
-                '  <td><button style="width: 100%" id="cordova.signature-view:ok">ok</button></td>'+
-                '  <td><button style="width: 100%" id="cordova.signature-view:cancel">cancel</button></td>'+
-                '</tr>'+
-                '</table>';
+            // TODO: Translatable strings for OK/Cancel, make colors configurable. Inline styling is also ugly
+            popup.innerHTML = '<div style="position: relative; margin: 2em auto; width: 80%; height: 80%; background-color: black;">'+
+                '  <div style="color: white">'+
+                '    <h3 style="margin: 0.1em 0;" id="cordova.signature-view:title"></h3>'+
+                '    <h3 style="margin: 0.1em 0; position: absolute; right: 0.5em; top: 0; cursor: pointer;" id="cordova.signature-view:cancel">╳</span>'+
+                '  </div>'+
+                '  <div style="position: relative"><canvas style="width:100%;height:100%;" id="cordova.signature-view:pad"></canvas></div>'+
+                '  <div><button style="width: 100%" id="cordova.signature-view:ok">ok</button></div>'+
+                '</div>';
             document.body.appendChild(popup);
             document.getElementById('cordova.signature-view:title').appendChild(document.createTextNode(title));
             okButton = document.getElementById('cordova.signature-view:ok');
@@ -80,6 +78,12 @@
             document.addEventListener('scroll', determineOffset, false);
             this.mouseDownEvent = this.touchStart.bind(this); // So we can unset it upon touch
             canvas.addEventListener('mousedown', this.mouseDownEvent, false);
+            // Force the canvas to actually be its calculated size.  If we don't do that,
+            // the drawing area will be small and the canvas element will appear
+            // "blown up" with huge pixels.
+            var w = $(canvas).width(), h = $(canvas).height();
+            canvas.width = w;
+            canvas.height = h;
             this.clear(canvas);
         },
         determineOffset: function() {

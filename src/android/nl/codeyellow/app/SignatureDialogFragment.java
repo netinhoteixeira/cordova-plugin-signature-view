@@ -12,10 +12,13 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.PopupWindow;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import java.lang.CharSequence;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -31,6 +34,32 @@ public class SignatureDialogFragment extends DialogFragment {
 		dialogTitle = title;
 		callbackContext = ctx;
 	}
+
+	// Closures are hard, so we jump through a few hoops and do it the Java way... The moronic way
+	// (if there's a way to get at the dialog view from the title view I'd love to hear it:
+	//  so far it didn't work because getParent keeps returning the Layout even if invoked
+	//  on the parent etc)
+	class DialogCloseListener implements View.OnClickListener {
+		public AlertDialog dialog;
+		public CallbackContext ctx;
+		
+		public DialogCloseListener(CallbackContext c) {
+			ctx = c;
+		}
+
+		public void setDialog(AlertDialog d) {
+			dialog = d;
+		}
+		
+		@Override
+		public void onClick(View view) {
+			// Signal that the user has exited, just in
+			// case we want to perform some sort of action
+			// on the JS side.
+			ctx.success((String)null);
+			dialog.cancel();
+		}
+	}
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -38,9 +67,30 @@ public class SignatureDialogFragment extends DialogFragment {
 		final SignatureView view = new SignatureView(act.getApplicationContext(), null);
 		final CallbackContext ctx = callbackContext; // Silly Java
 
-		return new AlertDialog.Builder(act)
-			.setTitle(dialogTitle)
+		// More silliness because the order of OK / Cancel keeps tripping people up,
+		// so we present a "close" button at the top right and only use OK
+		TextView titleLabelView = new TextView(act);
+		titleLabelView.setText(dialogTitle);
+		titleLabelView.setTextSize(TypedValue.COMPLEX_UNIT_MM, 5);
+		titleLabelView.setPadding(15, 0, 0, 0);
+		TextView titleCloseView = new TextView(act);
+		titleCloseView.setText("╳");
+		titleCloseView.setTextSize(TypedValue.COMPLEX_UNIT_MM, 5);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		titleCloseView.setLayoutParams(params);
+		titleCloseView.setPadding(0, 0, 15, 0);
+		DialogCloseListener listener = new DialogCloseListener(ctx);
+		titleCloseView.setOnClickListener(listener);
+		RelativeLayout titleView = new RelativeLayout(act);
+		titleView.setGravity(Gravity.FILL_HORIZONTAL | Gravity.CENTER_VERTICAL);
+		titleView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.FILL_PARENT));
+		titleView.addView(titleLabelView);
+		titleView.addView(titleCloseView);
+		
+		AlertDialog dialog = new AlertDialog.Builder(act)
 			.setView(view)
+			.setCustomTitle(titleView)
 			.setPositiveButton(
 				android.R.string.ok,
 				new DialogInterface.OnClickListener() {
@@ -66,18 +116,8 @@ public class SignatureDialogFragment extends DialogFragment {
 							dialog.dismiss();
 					}
 				})
-			.setNegativeButton(
-				android.R.string.cancel,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// Signal that the user has exited, just in
-						// case we want to perform some sort of action
-						// on the JS side.
-						ctx.success((String)null);
-						dialog.cancel();
-					}
-				})
 			.create();
+		listener.setDialog(dialog);
+		return dialog;
 	}
 }
