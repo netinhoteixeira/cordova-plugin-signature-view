@@ -1,6 +1,6 @@
 var SignatureViewNative = {
     getSignature: function(successCallback, errorCallback) {
-        var rest = Array.prototype.slice.call(arguments, 3);
+        var rest = Array.prototype.slice.call(arguments, 2);
         cordova.exec(function(data) {
             if (!data) {
                 return successCallback(data);
