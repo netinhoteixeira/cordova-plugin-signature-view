@@ -26,8 +26,8 @@ public class SignaturePlugin extends CordovaPlugin {
 	{
 		if (action.equals("new")) {
 			String title;
-			if (args.length() > 1) {
-				title = args.getString(1);
+			if (args.length() >= 1) {
+				title = args.getString(0);
 			} else {
 				// TODO: Make default string translatable
 				title = "Please sign below";
