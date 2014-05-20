@@ -35,8 +35,8 @@
                     var ctx = canvas.getContext('2d'),
                     bb = this.boundingBox;
                     imgData = ctx.getImageData(bb.left, bb.top,
-                                               bb.right - bb.left,
-                                               bb.bottom - bb.top);
+                                               bb.right - bb.left + 1,
+                                               bb.bottom - bb.top + 1);
                 }
                 cleanUp();
                 successCallback(imgData);
