@@ -18,7 +18,7 @@
                 signature.getSignatureFallback.apply(signature, arguments);
             }
         },
-        getSignatureFallback: function(successCallback, errorCallback, title) {
+        getSignatureFallback: function(successCallback, errorCallback, title, webpage) {
             title = title || "Please sign below";
             var popup = document.createElement('div'),
             cleanUp = function() {
@@ -56,12 +56,14 @@
             popup.style.height = '100%';
             popup.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
             // TODO: Translatable strings for OK/Cancel, make colors configurable. Inline styling is also ugly
-            popup.innerHTML = '<div style="position: relative; margin: 2em auto; width: 80%; height: 80%; background-color: black;">'+
+            popup.innerHTML = '<div style="position: relative; margin: 2em auto; width: 20%; height: 80%; background-color: black;">'+
                 '  <div style="color: white">'+
                 '    <h3 style="margin: 0.1em 0;" id="cordova.signature-view:title"></h3>'+
                 '    <h3 style="margin: 0.1em 0; position: absolute; right: 0.5em; top: 0; cursor: pointer;" id="cordova.signature-view:cancel">╳</span>'+
                 '  </div>'+
-                '  <div style="position: relative"><canvas style="width:100%;height:100%;" id="cordova.signature-view:pad"></canvas></div>'+
+                // TODO: Find out an elegant way to automatically determine the size of the webpage, and use the rest for signature.
+                (webpage ? '<div style="height: 50%; min-height: 50%; width: 100%"><object>'+webpage+'</object></div>' : '')+
+                '  <div style="position: relative"><canvas style="width: 100%; min-height: '+(webpage?'50%':'100%')+'" id="cordova.signature-view:pad"></canvas></div>'+
                 '  <div><button style="width: 100%" id="cordova.signature-view:ok">ok</button></div>'+
                 '</div>';
             document.body.appendChild(popup);

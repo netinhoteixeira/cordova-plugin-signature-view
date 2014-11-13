@@ -25,7 +25,7 @@ variable (a property on "window").  It provides only one method, with
 the following signature (no pun intended):
 
 	:::javascript
-	SignatureView.getSignature(success, error, [title]);
+	SignatureView.getSignature(success, error, [title, [htmlPage]]);
 
 The `success` argument is a callback function accepting one argument,
 which is either null (in case the user canceled the dialog) or an
@@ -38,6 +38,14 @@ wrong.
 
 The `title` argument is an optional string which indicates what the
 dialog should show as a heading.
+
+The `htmlPage` argument is also an optional string which supplies a
+full HTML page which will be presented in a webview above the
+signature pad area.  This allows you to place salient parts about the
+agreement just above the signature, which should help ensure that the
+user knows what they're signing.  The base `www` directory is
+configured as its base URI, so you can use assets from your
+application.
 
 Beware when converting the image data to a data URI: some mobile
 browsers (and IE) have length limitations on data URIs.  It's better

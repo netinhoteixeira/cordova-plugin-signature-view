@@ -25,16 +25,14 @@ public class SignaturePlugin extends CordovaPlugin {
 		throws JSONException
 	{
 		if (action.equals("new")) {
-			String title;
-			if (args.length() >= 1) {
-				title = args.getString(0);
-			} else {
-				// TODO: Make default string translatable
-				title = "Please sign below";
-			}
+			// TODO: Make default title translatable
+			String title = "Please sign below", htmlFile = null;
+			if (args.length() >= 2) htmlFile = args.getString(1);
+			if (args.length() >= 1) title = args.getString(0);
+
 			Activity act = this.cordova.getActivity();
 			FragmentManager fragmentManager = act.getFragmentManager();
-			SignatureDialogFragment frag = new SignatureDialogFragment(title, callbackContext);
+			SignatureDialogFragment frag = new SignatureDialogFragment(title, htmlFile, callbackContext);
 			frag.show(fragmentManager, "dialog");
 			return true;
 		} else {
