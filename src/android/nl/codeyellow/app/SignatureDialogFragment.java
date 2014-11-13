@@ -109,6 +109,7 @@ public class SignatureDialogFragment extends DialogFragment {
 			WebSettings setting = htmlView.getSettings();
 			setting.setJavaScriptEnabled(true);
 			setting.setDefaultTextEncodingName("utf-8");
+			htmlView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null); // FAST RENDERING, PLEASE (but will be slower when using fancy effects)
 			// Nobody knows exactly how this works...
 			htmlView.loadDataWithBaseURL("file:///android_asset/www/", htmlString.toString(), "text/html", null, null);
 			mainView.addView(htmlView);
