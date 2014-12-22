@@ -32,26 +32,32 @@
     API is identical to the one defined by the fallback
     implementation.
   </info>
-
-  <!-- Using a relative target is a dirty stinking hack, but it works! -->
-  <asset src="www/signature-view.js" target="../../../../www/js/signature-view.js" />
-
-  <dependency id="org.apache.cordova.device" />
   
-  <platform name="android">
-    <config-file target="res/xml/config.xml" parent="/widget">
-      <feature name="Signature">
-	<param name="android-package" value="nl.codeyellow.plugin.SignaturePlugin" />
-      </feature>
-    </config-file>
-    
-    <js-module src="www/signature-view-native.js" name="Signature" />
-    
-    <source-file src="src/android/nl/codeyellow/app/SignatureDialogFragment.java"
-		 target-dir="src/nl/codeyellow/app" />
-    <source-file src="src/android/nl/codeyellow/plugin/SignaturePlugin.java"
-		 target-dir="src/nl/codeyellow/plugin" />
-    <source-file src="src/android/nl/codeyellow/view/SignatureView.java"
-		 target-dir="src/nl/codeyellow/view" />
-  </platform>
+	<!-- Using a relative target is a dirty stinking hack, but it works!-->
+  	<!-- <asset src="www/signature-view.js" target="../../../../www/js/signature-view.js" /> -->
+  
+  	<!--
+  	<js-module src="www/signature-view.js name="Signature">
+		<clobbers target="cordova.plugins.webp"/>
+	</js-module>
+	-->
+	
+	<dependency id="org.apache.cordova.device" />
+	
+	<!-- android -->
+	<platform name="android">
+		<config-file target="res/xml/config.xml" parent="/widget">
+			<feature name="Signature">
+				<param name="android-package" value="nl.codeyellow.plugin.SignaturePlugin"/>
+				<!-- <param name="onload" value="true"/> -->
+			</feature>
+		</config-file>
+		
+		<js-module src="www/signature-view-native.js" name="Signature" />
+		
+		<source-file src="src/android/nl/codeyellow/app/SignatureDialogFragment.java" target-dir="src/nl/codeyellow/app" />
+		<source-file src="src/android/nl/codeyellow/plugin/SignaturePlugin.java" target-dir="src/nl/codeyellow/plugin" />
+		<source-file src="src/android/nl/codeyellow/view/SignatureView.java" target-dir="src/nl/codeyellow/view" />
+	</platform>
+
 </plugin>
