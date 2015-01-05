@@ -66,8 +66,6 @@ public class SignatureDialogFragment extends DialogFragment {
             // on the JS side.
             callbackContext.success((String) null);
             alertDialog.cancel();
-
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
     }
@@ -136,7 +134,7 @@ public class SignatureDialogFragment extends DialogFragment {
             public void onShow(final DialogInterface dialog) {
 
                 activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                
+
                 ((AlertDialog) dialog).getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 
                 Button p = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
@@ -150,7 +148,7 @@ public class SignatureDialogFragment extends DialogFragment {
                         if (bmp == null) {
                             ctx.success((String) null);
                         } else {
-                            // Maybe use getAllocationByteCount()+8?  It
+                            // Maybe use getAllocationByteCount()+8? It
                             // was added in API level 19.
                             int size = bmp.getWidth() * bmp.getHeight() * 4 + 8;
                             ByteBuffer buf = ByteBuffer.allocate(size); // BIG_ENDIAN
@@ -164,8 +162,6 @@ public class SignatureDialogFragment extends DialogFragment {
                         }
 
                         ((AlertDialog) dialog).dismiss();
-
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     }
 
                 });
@@ -185,6 +181,20 @@ public class SignatureDialogFragment extends DialogFragment {
         listener.setDialog(dialog);
 
         return dialog;
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
 }
