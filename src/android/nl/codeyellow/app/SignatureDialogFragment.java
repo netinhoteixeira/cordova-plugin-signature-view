@@ -23,7 +23,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import java.nio.ByteBuffer;
-import nl.codeyellow.view.SignatureView;
+import com.github.gcacace.signaturepad.views.SignaturePad;
 import org.apache.cordova.CallbackContext;
 
 public class SignatureDialogFragment extends DialogFragment {
@@ -73,7 +73,7 @@ public class SignatureDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Activity activity = getActivity();
-        final SignatureView signatureView = new SignatureView(activity.getApplicationContext(), null);
+        final SignaturePad signaturePad = new SignaturePad(activity.getApplicationContext(), null);
         final CallbackContext ctx = callbackContext; // Silly Java
 
         // More silliness because the order of OK / Cancel keeps tripping people up,
@@ -102,7 +102,7 @@ public class SignatureDialogFragment extends DialogFragment {
         RelativeLayout mainView = new RelativeLayout(activity);
         mainView.setGravity(Gravity.FILL_HORIZONTAL | Gravity.CENTER_VERTICAL);
         mainView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.FILL_PARENT));
-        mainView.addView(signatureView);
+        mainView.addView(signaturePad);
 
         if (htmlString != null) {
             // XXX TODO: Find a way to use the same class as the
@@ -142,7 +142,7 @@ public class SignatureDialogFragment extends DialogFragment {
 
                     @Override
                     public void onClick(View view) {
-                        Bitmap bmp = signatureView.getBitmap();
+                        Bitmap bmp = signaturePad.getSignatureBitmap();
 
                         // Drawing nothing is the same as canceling (for now?)
                         if (bmp == null) {
@@ -171,7 +171,7 @@ public class SignatureDialogFragment extends DialogFragment {
 
                     @Override
                     public void onClick(View view) {
-                        signatureView.clear();
+                        signaturePad.clear();
                     }
 
                 });
