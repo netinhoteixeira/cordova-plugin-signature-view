@@ -57,7 +57,10 @@
 		
 		<source-file src="src/android/nl/codeyellow/app/SignatureDialogFragment.java" target-dir="src/nl/codeyellow/app" />
 		<source-file src="src/android/nl/codeyellow/plugin/SignaturePlugin.java" target-dir="src/nl/codeyellow/plugin" />
-		<source-file src="src/android/nl/codeyellow/view/SignatureView.java" target-dir="src/nl/codeyellow/view" />
+		<source-file src="src/android/com/github/gcacace/signaturepad/views/SignaturePad.java" target-dir="com/github/gcacace/signaturepad/views" />
+		<source-file src="src/android/com/github/gcacace/signaturepad/utils/Bezier.java" target-dir="com/github/gcacace/signaturepad/utils" />
+		<source-file src="src/android/com/github/gcacace/signaturepad/utils/ControlTimedPoints.java" target-dir="com/github/gcacace/signaturepad/utils" />
+		<source-file src="src/android/com/github/gcacace/signaturepad/utils/TimedPoint.java" target-dir="com/github/gcacace/signaturepad/utils" />
 	</platform>
 
 </plugin>
